@@ -27,7 +27,7 @@
    * 监听移动端 tap 事件
    *
    * @param {HTMLElement|string} parent 容器
-   * @param {string} selector 选择器
+   * @param {string} selector 选择器，触发事件的元素
    * @param {Function} callback 回调函数
    * [[[
    *   @param {HTMLElement} element 触发元素
@@ -203,6 +203,7 @@
     parent.addEventListener('touchstart', startHandler, false);
     document.addEventListener('touchend', endHandler, false);
 
+    // 兼容 PC 端
     parent.addEventListener('mousedown', startHandler, false);
     document.addEventListener('mouseup', endHandler, false);
   }
