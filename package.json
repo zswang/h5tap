@@ -1,6 +1,6 @@
 {
   "name": "h5tap",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "h5tap.js",
   "description": "Tap event trigger of mobile",
   "repository": {

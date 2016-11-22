@@ -5,15 +5,15 @@
    * Tap event trigger of mobile
    * @author
    *   zswang (http://weibo.com/zswang)
-   * @version 0.0.1
-   * @date 2016-11-17
+   * @version 0.0.3
+   * @date 2016-11-22
    */
   /*<function name="h5tap">*/
   /**
    * 监听移动端 tap 事件
    *
    * @param {HTMLElement|string} parent 容器
-   * @param {string} selector 选择器
+   * @param {string} selector 选择器，触发事件的元素
    * @param {Function} callback 回调函数
    * [[[
    *   @param {HTMLElement} element 触发元素
@@ -133,6 +133,7 @@
     var startPoint;
     var target;
     var startTime;
+    var removeMouseEvent;
     function startHandler(e) {
       var elements = [].slice.call(parent.querySelectorAll(selector));
       target = e.target;
@@ -144,6 +145,11 @@
       }
       startTime = Date.now();
       if (/touchstart/i.test(e.type)) {
+        if (!removeMouseEvent) {
+          removeMouseEvent = true;
+          parent.removeEventListener('mousedown', startHandler);
+          document.removeEventListener('mouseup', endHandler);
+        }
         var touch = (e.touches || {})[0] || {};
         startPoint = [touch.clientX || 0, touch.clientY || 0];
       } else {
@@ -169,6 +175,7 @@
     }
     parent.addEventListener('touchstart', startHandler, false);
     document.addEventListener('touchend', endHandler, false);
+    // 兼容 PC 端
     parent.addEventListener('mousedown', startHandler, false);
     document.addEventListener('mouseup', endHandler, false);
   }

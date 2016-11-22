@@ -164,6 +164,7 @@
     var target;
     var startTime;
 
+    var removeMouseEvent;
     function startHandler(e) {
       var elements = [].slice.call(parent.querySelectorAll(selector));
       target = e.target;
@@ -175,6 +176,11 @@
       }
       startTime = Date.now();
       if (/touchstart/i.test(e.type)) {
+        if (!removeMouseEvent) {
+          removeMouseEvent = true;
+          parent.removeEventListener('mousedown', startHandler);
+          document.removeEventListener('mouseup', endHandler);
+        }
         var touch = (e.touches || {})[0] || {};
         startPoint = [touch.clientX || 0, touch.clientY || 0];
       } else {
