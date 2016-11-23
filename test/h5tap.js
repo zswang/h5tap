@@ -246,5 +246,60 @@ describe("src/h5tap.js", function () {
     }, 5)
   });
           
+  it("jsdom@h5tap():Scroll event", function (done) {
+    jsdom.env("    <div>\n       <button cmd=\"ok\"></button>\n    </div>", {
+        features: {
+          FetchExternalResources : ["script", "link"],
+          ProcessExternalResources: ["script"]
+        }
+      },
+      function (err, window) {
+        global.window = window;
+        ["document","navigator"].forEach(
+          function (key) {
+            global[key] = window[key];
+          }
+        );
+        assert.equal(err, null);
+        done();
+      }
+    );
+  });
+          
+  it("h5tap():Scroll event", function (done) {
+    examplejs_printLines = [];
+    var count = 0;
+    h5tap('div', '[cmd]', function (target) {
+      count++;
+    });
+
+    var point = [100, 100];
+    var target = document.querySelector('[cmd="ok"]');
+
+    // ------ touchstart ------
+    var e = document.createEvent('UIEvent');
+    var point = [100, 100];
+    e.touches = [{pageX: point[0], pageY: point[1], clientX: point[0], clientY: point[1]}];
+    e.initUIEvent('touchstart', true, true, window, 1);
+    target.dispatchEvent(e);
+
+    // ------ scroll ------
+    var e = document.createEvent('UIEvent');
+    e.initUIEvent('scroll', true, true, window, 1);
+    window.dispatchEvent(e);
+
+    // ------ touchend ------
+    var e = document.createEvent('UIEvent');
+    e.changedTouches = [{pageX: point[0], pageY: point[1], clientX: point[0], clientY: point[1]}];
+    e.initUIEvent('touchend', true, true, window, 1);
+    target.dispatchEvent(e);
+
+    setTimeout(function () {
+      examplejs_print(count);
+      assert.equal(examplejs_printLines.join("\n"), "0"); examplejs_printLines = [];
+      done();
+    }, 5)
+  });
+          
 });
          

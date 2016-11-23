@@ -5,8 +5,8 @@
    * Tap event trigger of mobile
    * @author
    *   zswang (http://weibo.com/zswang)
-   * @version 0.0.3
-   * @date 2016-11-22
+   * @version 0.0.4
+   * @date 2016-11-23
    */
   /*<function name="h5tap">*/
   /**
@@ -171,6 +171,40 @@
       // * done
     }, 5)
     ```
+   * @example h5tap():Scroll event
+    ```html
+    <div>
+       <button cmd="ok"></button>
+    </div>
+    ```
+    ```js
+    var count = 0;
+    h5tap('div', '[cmd]', function (target) {
+      count++;
+    });
+    var point = [100, 100];
+    var target = document.querySelector('[cmd="ok"]');
+    // ------ touchstart ------
+    var e = document.createEvent('UIEvent');
+    var point = [100, 100];
+    e.touches = [{pageX: point[0], pageY: point[1], clientX: point[0], clientY: point[1]}];
+    e.initUIEvent('touchstart', true, true, window, 1);
+    target.dispatchEvent(e);
+    // ------ scroll ------
+    var e = document.createEvent('UIEvent');
+    e.initUIEvent('scroll', true, true, window, 1);
+    window.dispatchEvent(e);
+    // ------ touchend ------
+    var e = document.createEvent('UIEvent');
+    e.changedTouches = [{pageX: point[0], pageY: point[1], clientX: point[0], clientY: point[1]}];
+    e.initUIEvent('touchend', true, true, window, 1);
+    target.dispatchEvent(e);
+    setTimeout(function () {
+      console.log(count);
+      // > 0
+      // * done
+    }, 5)
+    ```
    */
   function h5tap(parent, selector, callback) {
     if (typeof parent === 'string') {
@@ -224,6 +258,11 @@
     // 兼容 PC 端
     parent.addEventListener('mousedown', startHandler, false);
     document.addEventListener('mouseup', endHandler, false);
+    // 发生滚动则不触发
+    window.addEventListener('scroll', function() {
+      startPoint = null;
+      target = null;
+    });
   }
   /*</function>*/
   exports = h5tap;
